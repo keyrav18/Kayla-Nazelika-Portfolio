@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayla Nazelika Portofolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Pacifico&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --primary: #EFEAE3;       /* putih teks */
+            --secondary: #041c2e;     /* abu-blue */
+            --accent: #D9E0E4;        /* highlight */
+            
+            --bg: #030225;            /* background utama */
+            --surface: #060643;       /* card/section */
+            --surface-soft: #2B4050;  /* card lebih terang */
+            
+            --text: #F5F5F3;          /* teks utama */
+            --text-muted: #AEB8BF;    /* teks sekunder */
+            --border: #344957;        /* border */
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Behind content */
+            background: linear-gradient(to bottom, var(--bg), var(--bg));
+        }
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--bg);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        nav a:hover { color: var(--primary); }
+
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--text); /* Ubah dari white jadi dark text biar kontras */
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+        #music-btn {
+        position: fixed;
+        right: 20px;
+        top: 80px;
+        background: var(--secondary);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        padding: 18px 18px;
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        z-index: 2;
+        font-size: 12px;
+        font-weight: bold;
+        width: 125px;
+        }
+
+        #music-btn:hover {
+        background: #ffffff;
+        color: var(--secondary);  
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(3rem, 7vw, 5rem);
+            margin-bottom: 10px;
+            text-shadow: 4px 4px 12px rgba(0,0,0,0.5); /* Shadow lebih tebal biar pop */
+        }
+        .tagline {
+            font-size: 1.5rem;
+            max-width: 600px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.4); /* Tambah shadow di tagline juga */
+        }
+
+        section {
+            padding: 100px 20px;
+            max-width: 100%;
+            margin-top: 5px;
+            margin: 0 auto;
+            border-radius: 20px;
+            background: transparent;
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+        
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            margin-top: 5px;
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 40px;
+            text-align: center;
+            padding-top: 0px;
+        }
+
+
+        p {
+            font-size: 3rem;
+            color: var(--text);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        section#about.visible {
+        background-color: var(--bg);
+        }
+
+        section#skills.visible {
+        background-color: rgb(244, 244, 247);
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        border-radius: 0;
+        margin-bottom: 90px;
+        }
+
+        #about p {
+            max-width: 1500px;
+            padding-top: 50px;
+            margin: 0 auto;
+            font-size: 1.25rem;
+            color: var(--text);
+        }
+    .photo-placeholder {
+        width: 280px;
+        height: 280px;
+        border-radius: 0%;
+        margin: 20px auto 0px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .photo-placeholder img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: relative;
+        z-index: 2;
+        margin-top: 0;
+        transform: scale(1.05);
+    }
+
+        #skills h2{
+            color: var(--secondary);
+
+        }
+
+        #skills ul {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 20px;
+            list-style: none;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        #skills li {
+            background: var(--primary);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            color: var(--surface);
+            font-weight: bolder;
+            display: inline-flex;
+            gap: 15px;
+            align-items: center;
+            font-size: 1.25rem;
+        }
+
+        #skills li:hover {
+            transform: scale(1.05);
+            background: var(--secondary);
+            color: var(--primary);
+
+        }
+        .skill-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+    
+        section#projects.visible{
+        background-color: var(--bg);
+        }
+
+        #projects .grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(200px, 1fr));
+            gap: 50px;
+            max-width: 100%;
+            margin-left: 50px;
+            margin-right: 50px;
+        }
+
+        .project-card {
+            display: flex;
+            flex-direction: column;
+            background: #EFEAE3;
+            border-radius: 20px;
+            padding: 0px;
+            height: 100%;
+            width: 100%
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(39, 78, 178, 0.3);
+        }
+        .project-info {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        }
+        .project-info a{
+            color: var(--accent);
+            font-weight: bold;
+            margin-top: auto;
+            align-self: flex-end;
+            text-align: center;
+            font-size: 19px;
+
+        }
+        a.link {
+            display: block;
+            padding: 10px 10px;
+            background: var(--secondary);
+            border-radius: 20px;
+            transition: transform 0.3s;
+            width: 150px;
+            box-shadow: 4px 3px 2px var(--secondary);
+            margin-top: 30px;
+            margin-left: auto;
+            text-align: center;
+        }
+
+        .certificate-card .a.link{
+            display: block;
+            padding: 10px 10px;
+            background: var(--secondary);
+            border-radius: 20px;
+            transition: transform 0.3s;
+            width: 150px;
+            box-shadow: 4px 3px 2px var(--secondary);
+            margin-top: 30px;
+            margin-left: auto;
+            text-align: center;
+        }
+
+        .project-img1 {
+            width: 100%;
+            height: 200px;
+            background: #eee url('img/KANA-AI.png') center/cover;
+        }
+        .project-img2 {
+            width: 100%;
+            height: 200px;
+            background: #eee url('img/Chili.jpeg') center/cover;
+        }
+        .project-img3 {
+            width: 100%;
+            height: 200px;
+            background: #eee url('img/img1.jpeg') center/cover;
+        }
+        .project-img4 {
+            width: 100%;
+            height: 200px;
+            background: #eee url('img/img2.jpeg') center/cover;
+        }
+        .project-img5 {
+            width: 100%;
+            height: 200px;
+            background: #eee url('img/img3.jpeg') center/cover;
+        }
+        .project-img6 {
+            width: 100%;
+            height: 200px;
+            background: #eee url('img/img4.jpeg') center/cover;
+        }
+          .project-img7 {
+            width: 100%;
+            height: 200px;
+            background: #eee url('img/img5.jpeg') center/cover;
+        }
+          .project-img8 {
+            width: 100%;
+            height: 200px;
+            background: #eee url('img/img6.jpeg') center/cover;
+        }
+        .project-info {
+            padding: 20px;
+            display: grid;
+            grid-template-rows: auto auto auto 1fr auto;
+
+        }
+        .project-info h6 {
+            margin-top: 5px;
+            color: rgb(33, 42, 56);
+            font-size: 24px;
+            font-weight: bolder;
+            text-align: justify;
+        }
+        .project-info p{
+            font-size: 1rem;
+            color: var(--bg);
+            margin-bottom: 0;
+            text-align: left;
+            font-family: sans-serif, 'poppins';
+            padding-right: 10px;
+            padding-top: 10px;
+        }
+
+        #contact {
+            background: linear-gradient(to right, var(--secondary));
+            color: white;
+            border-radius: 0;
+        }
+        #contact p {
+            font-size: 20px;
+            font-weight: 700;
+            font-size:sans-serif, 'poppins';
+        }
+        #contact h2{
+            font-size: 50px;
+            color: var(--primary);
+            font-weight: 600;
+
+        }
+        a {
+            color: white;
+            text-decoration: underline;
+        }
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: rgba(23, 126, 190, 0.05);
+            color: beige;
+            position: relative;
+        }
+        footer p{
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        /* =========================================================
+           ADDED PORTFOLIO SECTIONS
+           Semua isi di bawah ini dibuat mudah diedit langsung dari HTML.
+           ========================================================= */
+
+        .section-intro {
+            max-width: 760px;
+            margin: -20px auto 40px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .experience-block {
+            margin-bottom: 55px;
+        }
+
+        .experience-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .subsection-title {
+            font-size: 1.65rem;
+            color: var(--secondary);
+            margin-bottom: 22px;
+            text-align: left;
+            border-left: 4px solid var(--accent);
+            padding-left: 14px;
+        }
+
+        .timeline {
+            display: grid;
+            gap: 30px;
+            max-width: 2000px;  
+            margin: 0 auto; 
+        }
+
+        .timeline-item,
+        .info-card,
+        .certificate-card,
+        .organization-card {
+            background: #fbf3e8;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(47, 51, 48, 0.07);
+            transition: transform .3s ease, box-shadow .3s ease;
+            max-width: 1700px;
+        }
+
+        .certificate-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;          
+        }
+
+        .certificate-card a.link {
+            margin-top: auto;     
+            align-self: flex-end;   
+            display: block;
+            padding: 10px 10px;
+            background: var(--secondary);
+            border-radius: 20px;
+            transition: transform 0.3s;
+            width: 150px;
+            box-shadow: 4px 3px 2px var(--secondary);
+            text-align: center;
+            color: white;
+            text-decoration: none;
+        }
+
+        .timeline-item a{
+            margin-top: 60px;
+            font-size: 1.2rem;
+            display: block;
+            font-weight: 600;
+        }
+
+        .organization-card {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: flex-start;
+                    gap: 20px;
+                    overflow: hidden;   /* biar isi yang kelebihan gak keluar dari card */
+                }
+
+                .organization-photo {
+                    margin-top: 100px;
+                    width: 250px;
+                    height: 230px;
+                    object-fit: cover;
+                    border-radius: 12px;
+                    flex-shrink: 0;
+                    background: var(--surface-soft); 
+                }
+
+                .organization-content {
+                    flex: 1;
+                    min-width: 0;   /* ⚠️ ini kunci fix-nya — biar teks bisa nge-wrap dan gak dorong card melebar/kepotong */
+                    margin-bottom:0;
+                }
+                
+        .timeline-item:hover,
+        .info-card:hover,
+        .certificate-card:hover,
+        .organization-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 14px 30px rgba(47, 51, 48, 0.11);
+        }
+
+        .item-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .item-top h4 {
+            color: var(--surface);
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+
+        .item-top .date {
+            white-space: nowrap;
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 1.1rem;
+            background: #F5F5F3;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border:#060643 solid 4px
+        }
+
+        .item-meta {
+            color: BLACK;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .timeline-item p,
+        .info-card p,
+        .certificate-card p,
+        .organization-card p {
+            font-size: 1.2rem;
+            text-align: left;
+            color: var(--secondary);
+            margin-bottom: 0;
+            line-height: 1.75;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+            align-items: flex-start; 
+        }
+
+        .tag {
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: rgb(156, 236, 250);
+            color:var(--surface-soft);
+            font-size: 1rem;
+            font-weight: 600;
+            border: 1px solid var(--secondary);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-card h4,
+        .certificate-card h4,
+        .organization-card h4 {
+            color: var(--surface);
+            margin-bottom: 8px;
+            font-size: 1.20rem;
+        }
+    .certificate-photo {
+        display: block;
+        width: calc(100% + 60px);   /* nutupin padding card kiri-kanan */
+        margin: -30px -30px 16px;   /* nutupin padding-nya (sesuaikan sama padding card kamu, sekarang 30px) */
+        border-radius: 16px 16px 0 0;
+        height: 180px;
+        object-fit: cover;
+    }
+        
+        .organization-card {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            grid-template-areas:
+                "title title"
+                "orgname orgname"
+                "photo text";
+            gap: 6px 20px;
+            overflow: hidden;
+        }
+
+        .organization-content {
+            display: contents;
+        }
+
+        .organization-content h4 {
+            grid-area: title;
+            color: var(--surface);
+            margin-bottom: 8px;
+            font-size: 1.15rem;
+        }
+
+        .organization-content h3 {
+            grid-area: orgname;
+            color: var(--surface);
+            margin-bottom: 8px;
+            font-size: 1.15rem;
+            margin-top: 0;
+        }
+
+        .organization-content p {
+            grid-area: text;
+            text-align: justify;
+        }
+
+        .organization-photo {
+            grid-area: photo;
+            width: 220px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-top: 0;
+            
+        }
+
+        .certificate-grid,
+        .organization-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .certificate-icon,
+        .organization-icon {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: var(--surface-soft);
+            color: var(--secondary);
+            font-size: 1.35rem;
+            margin-bottom: 16px;
+        }
+
+        .activity-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .activity-card {
+            overflow: hidden;
+            border-radius: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+
+        .organization-content .link{
+        margin-left: 0;
+        margin-right: auto;
+        margin-top: 20px;
+        display: block;
+        }
+
+        .activity-photo {
+            height: 230px;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--surface-soft), #F8F6F1);
+            color: var(--text-muted);
+            font-size: .9rem;
+            overflow: hidden;
+        }
+
+        .activity-photo span {
+            padding: 20px;
+        }
+
+        .activity-photo img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            object-position: center top;
+            transform: scale(0.90);
+        }
+
+        .activity-caption {
+            padding: 16px 18px 20px;
+        }
+
+        .activity-photo img.pos-low1 {
+        transform: translateY(-110px) scale(1.00);
+        }
+
+        .activity-photo img.pos-low2 {
+        transform: translateY(-80px) scale(1.00);
+        }
+
+        .activity-photo img.pos-low3 {
+        transform: translateY(-500px) scale(1);
+        }
+
+        .activity-photo img.pos-low4 {
+        transform: translateY(-80px) scale(1.00);
+        }
+
+        .activity-photo img.pos-low5 {
+        transform: translateY(-120px) scale(1.00);
+        }
+
+        .activity-photo img.pos-low6 {
+        transform: translateY(-120px) scale(1.00);
+        }
+
+        .activity-photo img.pos-low7 {
+        transform: translateY(-120px) scale(1.00);
+        }
+
+        .activity-caption h4 {
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .activity-caption p {
+            font-size: .88rem;
+            text-align: left;
+            margin: 0;
+            color: var(--text-muted);
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .contact-links a {
+            display: inline-block;
+            padding: 10px 18px;
+            border: 1px solid rgba(255,255,255,.55);
+            border-radius: 999px;
+            text-decoration: none;
+            color: white;
+            transition: .25s ease;
+        }
+
+        .contact-links a:hover {
+            background: white;
+            color: var(--secondary);
+        }
+
+        @media (max-width: 900px) {
+            nav ul {
+                gap: 12px;
+                padding: 0 12px;
+                overflow-x: auto;
+                justify-content: flex-start;
+            }
+
+            nav a {
+                font-size: .8rem;
+                white-space: nowrap;
+            }
+
+            section {
+                margin-left: 12px;
+                margin-right: 12px;
+                padding: 70px 18px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .item-top {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .item-top .date {
+                white-space: normal;
+            }
+
+            #music-btn {
+                top: auto;
+                bottom: 20px;
+                right: 15px;
+            }
+        }
+
+        .home-section {
+                width: 100%;
+                min-height: 100vh;
+                padding: 100px 20px;
+                margin: 0;
+                position: relative;
+
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                
+                text-align: center;
+                
+                overflow: hidden;
+            }
+
+            .home-section h1 {
+                width: 100%;
+                margin: 0;
+                
+                font-size: clamp(2.5rem, 6vw, 4rem);
+                text-align: center;
+            }
+
+            .home-section .tagline {
+                width: 100%;
+                text-align: center;
+                margin: 20px auto 0;
+            }
+
+            .home-section .bg-video {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                z-index: -1;
+            }
+
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Me</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">My Projects</a></li>
+            <li><a href="#organization">Organization</a></li>
+            <li><a href="#education">Education</a></li>
+            <li><a href="#publications">Publications</a></li>
+            <li><a href="#certifications">Certifications</a></li>
+            <li><a href="#activities">Activities</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+<div id="home" class="section home-section">
+    <video class="bg-video" autoplay muted loop playsinline> 
+        <source src="vid/bg-video.mp4" type="video/mp4">
+    </video>
+    <h1>Kayla Nazelika</h1>
+
+    <p class="tagline">
+        AI Engineering | Data Analysis | Machine Learning | Deep Learning | Computer Vision | Software/Web Development 
+    </p>
+
+</div>
+
+    <audio id="bg-music" loop preload="auto">
+    <source src="music/sound.mp3" type="audio/mpeg">
+    Browser kamu tidak support audio.
+    </audio>
+    <button id="music-btn">🔈Play Music</button>
+
+    <section id="about">
+        <h2>About Me</h2>
+        <div class="photo-placeholder">
+            <img src="img/Profile.png" alt="ini profile saya">
+        </div>
+        <p>Hello! I am a Bachelor’s degree graduate in Informatics Engineering from UIN Syarif Hidayatullah Jakarta (GPA 3.80), with a focus and experience in Artificial Intelligence, Machine Learning, Computer Vision, Data Analysis, and application development. I have experience developing AI-based solutions such as KANA AI, an Al-Qur’an chatbot utilizing Large Language Models (LLM), Retrieval-Augmented Generation (RAG), Knowledge Graph, and GraphRAG, as well as developing Computer Vision-based models.
+        <p>I am proficient in Python, JavaScript, PHP, SQL, and MySQL, with experience in data processing and management using Microsoft Excel and Google Sheets. I also have experience in information system development, Web Development, UI/UX Design, IT Support, Software Testing, and Data Processing.
+        Beyond my technical expertise, I have been actively involved in organizational activities and gained leadership experience as the Head of the Management Division. I have also worked as a Teaching Assistant and contributed to information system development projects. Additionally, I contributed as an editor to the development of an ISBN-registered Big Data textbook published by UIN Jakarta Press.
+        I am a fast learner who is adaptable, analytical, detail-oriented, responsible, and capable of working independently as well as collaboratively within a team.
+</p>
+    </section>
+
+    <section id="skills">
+        <h2>Skills And Tools</h2>
+        <ul>
+            <li><span class="skill-icon"></span>GraphRAG and Retrieval-Augmented Generation (RAG)</li>
+            <li><span class="skill-icon"></span>Data validation</li>
+            <li><span class="skill-icon"></span>Python</li>
+            <li><span class="skill-icon"></span>Neo4j, MYSQL & PostgreSQL</li>
+            <li><span class="skill-icon"></span>Large Language Model (LLM)</li>
+            <li><span class="skill-icon"></span>Artificial Intelligence (AI)</li>
+            <li><span class="skill-icon"></span>HTML, PHP, CSS, JavaScript</li>
+            <li><span class="skill-icon"></span>Data Visualization (Power BI)</li>
+            <li><span class="skill-icon"></span>Machine Learning & Deep Learning</li>
+            <li><span class="skill-icon"></span>User Flow & Information Architecture</li>
+            <li><span class="skill-icon"></span>Computer Vision</li>
+            <li><span class="skill-icon"></span>Software/Application Development</li>
+        </ul>
+    </section>
+
+    <section id="projects">
+        <h2>My Projects</h2>
+        <p class= "section-intro">A collection of projects showcasing skills, creativity, and practical experience.</p>
+        <div class="grid">
+            <div class="project-card">
+                <div class="project-img1"></div>
+                <div class="project-info">
+                    <h6>Project 1</h6>
+                    <p>QURANIC WITH LLM, RAG AND GRAPHRAG CHATBOT (KANA AI)</p>
+                    <h6>Description</h6>
+                    <p>Designed and developed a chatbot based on Knowledge Graph and Retrieval-Augmented Generation (RAG), focusing on data validation, feature testing, and result analysis to ensure information accuracy and relevance. Developed the chatbot using Python and implemented Cypher queries to manage and retrieve graph-based data from a Neo4j database. The project also included dataset preparation, test documentation, and system evaluation throughout the development process.</p>
+                    <a href="https://colab.research.google.com/drive/1plAHM4zDclVs6juJhcIOWDtVUWgq6HGT?usp=sharing" class="link" target="_blank">View Project</a> 
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-img2"></div>
+                <div class="project-info">
+                    <h6>Project 2</h6>
+                    <p>CHILI CLASSIFICATION ANALYSIS USING K-NEAREST NEIGHBOR</p>
+                    <h6>Description</h6>
+                    <p>Developed a chili image classification project using the K-Nearest Neighbor (K-NN) algorithm to analyze color, shape, and texture characteristics. The analysis compared Euclidean Distance and City Block Distance methods and evaluated classification performance using accuracy, precision, recall, and F1-score.</p>
+                    <a href="https://drive.google.com/drive/folders/1loa4MDVV119PUE5cyw4hlnvhXiOdRXKl?usp=drive_link" class="link" target="_blank">View Project</a> 
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-img3"></div>
+                <div class="project-info">
+                    <h6>Project 3</h6>
+                    <p>UI/UX Design & WIREFRAME PROTOTYPING (STUDENT MANAGEMENT SYSTEM)</p>
+                    <h6>Description</h6>
+                    <p>Designed innovative UI/UX for a student management system using the RAD method, resulting in an intuitive dashboard that speeds up data access by up to 50% through wireframes and interactive prototypes.</p>
+                    <a href="https://www.figma.com/design/zI05yKcVf6KGamuF0shSml/Untitled?node-id=0-1&p=f&t=9G6Va4YgoO8Jxvz0-0" class="link" target="_blank">View Project</a> 
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-img4"></div>
+                <div class="project-info">
+                    <h6>Project 4</h6>
+                    <p>UIN MAPS NAVIGATION (UIN MAPS)</p>
+                    <h6>Description</h6>
+                    <p>Developed a web-based GIS application that integrates Leaflet.js and OpenRoute Service API, enabling academic community to find the fastest campus routes with real-time estimates, thereby improving campus navigation efficiency.</p>
+                    <a href="https://maps-uin-kdxp.vercel.app/" class="link" target="_blank">View Project</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-img5"></div>
+                <div class="project-info">
+                    <h6>Project 5</h6>
+                    <p>UI/UX Design & WIREFRAME PROTOTYPING (KEYLIBRARY)</p>
+                    <h6>Description</h6>
+                    <p>Designed UI/UX for a digital library application based on user-centered design, resulting in an intuitive and responsive interface that accelerates book search processes and enhances user comfort through wireframes and interactive prototypes.</p>
+                    <a href="https://www.figma.com/design/UTyJMNunUG9YIBIqLikR8J/Keylibrary?node-id=0-1&p=f" class="link" target="_blank">View Project</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-img6"></div>
+                <div class="project-info">
+                    <h6>Project 6</h6>
+                    <p>UI/UX Design & WIREFRAME PROTOTYPING (DIGITAL LIBRARY SDN CITAYAM 05)</p>
+                    <h6>Description</h6>
+                    <p>Developed UI/UX for a school digital library application with a focus on easy book searching, clear information structure, and intuitive user experience. This design successfully helped organize book data management, borrowing processes, and digital returns, making them more structured, efficient, and user-friendly for both students and teachers.</p>
+                    <a href="https://www.figma.com/design/v4kM2Ed6pg3RNkbcosR2CY/Developer-s-team-library?node-id=412-2&p=f" class="link" target="_blank">View Project</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-img7"></div>
+                <div class="project-info">
+                    <h6>Project 7</h6>
+                    <p>UI/UX Design & WIREFRAME PROTOTYPING (LANDING PAGE & PROFILE SDN CITAYAM 05)</p>
+                    <h6>Description</h6>
+                    <p>Designed UI/UX for the landing page and school profile page with a modern and informative approach to highlight the school's identity. This design successfully improved the clarity of information delivery, made it easier for visitors to find important data such as school profiles and academic information, and created a faster and more comfortable access experience.</p>
+                    <a href="https://www.figma.com/design/GIPwnuW6Qc47NBPY8pOH3U/ADS?node-id=0-1&p=f" class="link" target="_blank">View Project</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-img8"></div>
+                <div class="project-info">
+                    <h6>Project 8</h6>
+                    <p>UI/UX Design & WIREFRAME PROTOTYPING (WEBSITE SDN CITAYAM 05)</p>
+                    <h6>Description</h6>
+                    <p>Implemented UI/UX designs into the development of an official school website using front-end technologies to showcase the school profile, teacher information, news, digital library, and student activities. The development resulted in a responsive and accessible website that supported the digitalization of school information services and made it easier for students, teachers, and parents to access information online.</p>
+                    <a href="https://sdn-05-citayam.vercel.app/" class="link" target="_blank">View Project</a>
+                </div>
+            </div>
+        </div> 
+    </section>
+
+
+    <!-- =========================================================
+         WORK EXPERIENCE & PROJECT EXPERIENCE
+         EDIT: ubah judul, tanggal, perusahaan, deskripsi, dan tag.
+         ========================================================= -->
+    <section id="experience">
+        <h2>Work Experience</h2>
+        <p class="section-intro">A summary of professional experiences, key responsibilities, and contributions in various roles.</p>
+        <div class="experience-block">
+            <div class="timeline">
+
+                <!-- WORK EXPERIENCE 1 — EDIT THIS CARD -->
+                <article class="timeline-item">
+                    <div class="item-top">
+                        <div>
+                            <h4>IT Support / Helpdesk Intern</h4>
+                            <div class="item-meta">PT. SOLUSI JASA TEKNOLOGI</div>
+                        </div>
+                        <span class="date">Feb 2026 – Apr 2026</span>
+                    </div>
+                    <p>As an IT Support (Helpdesk), monitored and analyzed service incident data to identify problem patterns and support operational evaluations. Managed more than 500 service tickets per week, including data validation, status updates, and ensuring information completeness in accordance with the company’s SLA standards. Prepared operational reports using Microsoft Excel (Pivot Tables, and XLOOKUP), Power BI for visualization, and Google Sheets to support service performance monitoring. Recorded, validated, and documented incident data for analysis and service improvement initiatives. Collaborated with technical teams by providing relevant data and information to support issue investigation and resolution.</p>
+                    <div class="tag-list">
+                        <span class="tag">IT Support</span>
+                        <span class="tag">Helpdesk</span>
+                        <span class="tag">Troubleshooting</span>
+                        <span class="tag">Data Analysis & Visualization</span>
+                    </div>
+                    <a href="https://docs.google.com/spreadsheets/d/1OCJFG6t10LPpighzNaUbxwqIBC5LBclr/edit?usp=sharing&ouid=101533576110361417355&rtpof=true&sd=true" class="link" target="_blank">View Project</a>
+                </article>
+
+                <!-- WORK EXPERIENCE 2 — EDIT THIS CARD -->
+                <article class="timeline-item">
+                    <div class="item-top">
+                        <div>
+                            <h4>Web Developer Intern</h4>
+                            <div class="item-meta">SDN Citayam 05</div>
+                        </div>
+                        <span class="date">Jan 2025 – Apr 2025</span>
+                    </div>
+                    <p>As a Web Developer Intern, contributed to the development and maintenance of school websites, including designing user interfaces, implementing responsive layouts, and ensuring cross-browser compatibility. Collaborated with team members to gather requirements, create wireframes, and develop functional prototypes. Gained experience in front-end technologies such as HTML, CSS, and JavaScript, as well as back-end development using PHP and MySQL.</p>
+                    <div class="tag-list">
+                        <span class="tag">HTML</span>
+                        <span class="tag">CSS</span>
+                        <span class="tag">MySQL</span>
+                        <span class="tag">SQL</span>
+                        <span class="tag">Testing</span>
+                    </div>
+                </article>
+
+                <!-- WORK EXPERIENCE 3 — EDIT THIS CARD -->
+                <article class="timeline-item">
+                    <div class="item-top">
+                        <div>
+                            <h4>Information System Development Team</h4>
+                            <div class="item-meta">Pustipanda UIN Jakarta</div>
+                        </div>
+                        <span class="date">Jun 2024 – Sep 2024</span>
+                    </div>
+                    <p>Contributed to the development of the eSemesta information system at PUSTIPANDA, covering system design, development, and testing. Managed and validated data using Microsoft Excel, Google Sheets, and information systems, while conducting initial identification of issues within the Academic System and documenting meeting results to support operational needs and system development.</p>
+                    <div class="tag-list">
+                        <span class="tag">Excel</span>
+                        <span class="tag">Google Sheets</span>
+                        <span class="tag">Data Analysis & Processing</span>
+                        <span class="tag">Software Analysis & Testing Documentation</span>
+                    </div>
+                    <a href="https://drive.google.com/drive/folders/19ojbata-nIUeVwzflA7FF4cghBaOlo6S?usp=sharing" class="link" target="_blank">View Project</a>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================
+         ORGANIZATIONAL EXPERIENCE
+         EDIT: isi jabatan, organisasi, periode, dan kontribusi.
+         ========================================================= -->
+    <section id="organization">
+        <h2>Organizational Experience</h2>
+        <p class="section-intro">Organizational roles, teamwork, leadership, and event contributions.</p>
+        <div class="organization-grid">
+
+            <!-- ORGANIZATION 1 — EDIT THIS CARD -->
+            <article class="organization-card">
+                <img src="img/DS.jpeg" alt="Kegiatan Dapur Seni" class="organization-photo">
+                <div class="organization-content">
+                    <h4>HEAD OF MANAGEMENT DIVISION</h4>
+                    <h3><strong>OPK DAPUR SENI</strong></h3>
+                    <p>Period: <em>2023-2025</em><br>
+                    Served as Head of the Management Division at the Faculty of Science and Technology’s 
+                    Dapur Seni, overseeing organizational development, operations, member coordination, events, 
+                    promotion, public relations, curriculum development, data management from various divisions, management activities, and 
+                    external partnerships.</p>
+                </div>
+            </article>
+
+            <!-- ORGANIZATION 2 — EDIT THIS CARD -->
+            <article class="organization-card">
+                <img src="img/HIMTI.jpeg" alt="Kegiatan HIMTI" class="organization-photo">
+                <div class="organization-content">
+                    <h4>HIMPUNAN MAHASISWA TEKNIK INFORMATIKA (HIMTI)</h4>
+                    <h3><strong>PUBLIC RELATIONS</strong></h3>
+                    <p>Period: <em>2023-2024</em><br>
+                    Served as a member of the organizing team for various activities of HIMTI UIN 
+                    Syarif Hidayatullah Jakarta. Contributed to event planning and execution, coordinated with 
+                    team members, and helped ensure operational requirements were met in accordance with assigned
+                    responsibilities.</p>
+                </div>
+            </article>
+
+            <!-- DUPLICATE THIS ARTICLE TO ADD MORE -->
+        </div>
+    </section>
+
+    <!-- =========================================================
+         EDUCATION
+         EDIT: sekolah/universitas, degree, periode, GPA, achievement.
+         ========================================================= -->
+    <section id="education">
+        <h2>Educations</h2>
+        <p class="section-intro">Academic background</p>
+        <div class="info-grid">
+
+            <!-- EDUCATION 1 — EDIT THIS CARD -->
+            <article class="info-card">
+                <h4>S1 Informatics Engineering</h4>
+                <p><strong>UIN Syarif Hidayatullah Jakarta</strong><br>
+                Period: <em>2022-2026</em><br>
+                GPA: <strong>3.80 / 4.00</strong></p>
+            </article>
+
+            <!-- EDUCATION 2 -->
+            <article class="info-card">
+                <h4>Computer and Network Engineering</h4>
+                <p><strong>Bina Rahayu Vocational School</strong><br>
+                Period: <em>2019-2022</em><br>
+                Value: <strong>89.69</strong></p>
+            </article>
+        </div>
+    </section>
+
+    <!-- =========================================================
+        JOURNAL AND BOOK
+    ========================================================= -->
+        <section id="publications">
+        <h2>Research & Publications</h2>
+        <p class="section-intro">Collection of research, journals, and books created through ideas, insights, and exploration.</p>
+        <div class="organization-grid">
+
+            <!-- ORGANIZATION 1 — EDIT THIS CARD -->
+            <article class="organization-card">
+                <img src="img/Cover-Buku.png" alt="Buku Big Data" class="organization-photo">
+                <div class="organization-content">
+                    <h4>ISBN-Registered Book</h4>
+                    <h3><strong>BIG DATA</strong></h3>
+                    <p>Contributed to the preparation of a Big Data book, assisting in 
+                        material selection, content editing, organization, and layout design.
+                        Helped ensure the materials were structured systematically and 
+                        presented in a clear and consistent format.</p>
+                    <a href="https://drive.google.com/file/d/1rGtx1NxRZYPHVAC38FJuqsrO0t8Cz9-X/view?usp=sharing" class="link" target="_blank">View File</a>
+                </div>
+            </article>
+
+            <!-- ORGANIZATION 2 — EDIT THIS CARD -->
+            <article class="organization-card">
+                <img src="img/Gas-Leakage.png" alt="Jurnal Gas Leakage" class="organization-photo">
+                <div class="organization-content">
+                    <h4>Jurnal Teknik Informatika (JTI)</h4>
+                    <h3><strong>LPG GAS LEAKAGE DETECTION AND CONTROL SYSTEM USING ESP32 
+                        WITH AUTOMATED SOLENOID VALVE AND TELEGRAM INTEGRATION</strong></h3>
+                    <p>Contributed to the development of a research journal on an IoT-based 
+                        smart gas leak detection and prevention system. Assisted in research 
+                        preparation, content development, and editing, focusing on real-time 
+                        monitoring, automated gas flow termination, and Telegram-based notifications.</p>
+                    <a href="https://drive.google.com/file/d/1aMgN3iikuMkTtkTCZ6EwMIvji48ko8WP/view?usp=sharing" class="link" target="_blank">View File</a>
+                </div>
+            </article>
+
+            <article class="organization-card">
+                <img src="img/Thesis Journal.png" alt="Thesis Journal" class="organization-photo">
+                <div class="organization-content">
+                    <h4>Journal IEEE</h4>
+                    <h3><strong>KANA AI: AN Al-QUR'AN CHATBOT USING RAG AND GraphRAG FOR UNDERSTANDING ESCHATOLOGICAL
+                        THEMES IN JUZ 30</strong></h3>
+                    <p>Contributed to the development and publication of a research journal based on 
+                        KANA AI, an Al-Qur’an chatbot developed as part of the thesis. Contributed to 
+                        documenting the research methodology, system implementation, evaluation results, and 
+                        analysis of the integration of Knowledge Graph, RAG, and GraphRAG.</p>
+                    <a href="https://drive.google.com/file/d/1s9NkM6J1hkJAuRTF4RtVC1VDhpbpXt0j/view?usp=sharing" class="link" target="_blank">View File</a>
+                    </div>
+            </article>
+
+            <article class="organization-card">
+                <img src="img/The Hybrid.png" alt="The Hybrid" class="organization-photo">
+                <div class="organization-content">
+                    <h4>Conference Journal On Cyber & IT Service Management</h4>
+                    <h3><strong>THE HYBRID ARIMA-XGBOOST MODEL FOR FORECASTING PERFORMANCE ANALYSIS OF NEW HIV CASES IN INDONESIA</strong></h3>
+                    <p>Contributed to the research and publication of a journal on HIV case forecasting in Indonesia using a
+                        hybrid SARIMAX-XGBoost model. Contributed to data processing, model implementation, 
+                        performance evaluation, research analysis, and documentation of the research findings.</p>
+                    <a href="https://drive.google.com/file/d/11cAA33Mlguwzs-K1aDcoyGlXZ4kjPVXb/view?usp=sharing" class="link" target="_blank">View File</a>
+                    </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- =========================================================
+         CERTIFICATIONS & TRAINING
+         EDIT: nama sertifikat, provider, tahun, dan link.
+         ========================================================= -->
+    <section id="certifications">
+        <h2>Certifications & Training</h2>
+        <p class="section-intro">Certifications, courses, workshops, and professional training.</p>
+        <div class="certificate-grid">
+            <article class="certificate-card">
+                            <img src="img/ASDOS.png" alt="TRAINING" class="certificate-photo">
+                            <h4>CERTIFICATION OF APPRECIATION</h4>
+                            <p><strong>Provider: </strong>Informatics Engineering<br>
+                            <strong>Period: </strong> Oct 2024 - Jun 2025<br>
+                            <strong>Description: </strong>Served as a Teaching Assistant for the Basic Programming course at the Informatics Study Program, UIN Syarif Hidayatullah Jakarta, during the 2024–2025 academic year. Assisted the lecturer in supporting the learning process, guiding students, and ensuring effective course activities.</p>
+                            <a href="https://drive.google.com/file/d/1SZ6SH9ZtLfDeS8jS9wDWtf6F9QuDewPZ/view?usp=sharing" class="link" >View</a>
+                        </article>
+
+            <article class="certificate-card">
+                <img src="img/HCIA-AI.jpg" alt="AI TRAINING" class="certificate-photo">
+                <h4>HCIA-AI V3.5 COURSE</h4>
+                <p><strong>Provider: </strong> Huawei Talent<br>
+                <strong>Period: </strong> Dec 2024 - Dec 2027<br>
+                <strong>Description: </strong> Training on the fundamentals and application of Artificial Intelligence (AI) covering machine learning, deep learning, and AI development frameworks—as well as an introduction to Huawei AI platforms such as MindSpore and Ascend.</p>
+                <a href="https://drive.google.com/file/d/1zQ8hTknf0V-ysUTsQpvnkhUiCMEvqsNa/view?usp=drive_link" class="link" >View</a>
+            </article>
+
+            <article class="certificate-card">
+                <img src="img/PE.png" alt="TRAINING" class="certificate-photo">
+                <h4>PYTHON ESSENTIALS 1</h4>
+                <p><strong>Provider: </strong>Cisco Networking Academy<br>
+                <strong>Period: </strong> Sep 2024 - Sep 2027<br>
+                <strong>Description: </strong>Certified in Python programming fundamentals covering design, development, debugging, and refactoring of simple Python 3 programs, algorithmic problem solving, Python Standard Library usage, and the role of a programmer in the software development process.</p>
+                <a href="https://drive.google.com/file/d/1zFFUa2CvRQgzDKyYP9OPbxaW2aZAiq2s/view?usp=sharing" class="link" >View</a>
+            </article>
+
+            <article class="certificate-card">
+                <img src="img/ES.png" alt="TRAINING" class="certificate-photo">
+                <h4>ENDPOINT SECURITY</h4>
+                <p><strong>Provider: </strong>Cisco Networking Academy<br>
+                <strong>Period: </strong> Dec 2024 - Dec 2027<br>
+                <strong>Description: </strong>Certified in endpoint security covering data-related challenges, threat mitigation measures for common and emerging network threats, simulated network configuration, malware analysis from packet captures, and endpoint security evaluation.</p>
+                <a href="https://drive.google.com/file/d/1ubM0YXeJ_jrskMYUwqRYd890ZA2ZNT4y/view?usp=sharing" class="link" >View</a>
+            </article>
+
+            <article class="certificate-card">
+                <img src="img/Introduction to Cybersecurity.png" alt="TRAINING" class="certificate-photo">
+                <h4>INTRODUCTION TO CYBERSECURITY</h4>
+                <p><strong>Provider: </strong>Cisco Networking Academy<br>
+                <strong>Period: </strong> Dec 2024 - Dec 2027<br>
+                <strong>Description: </strong>Certified in the fundamentals of cybersecurity covering common cyber threats, attacks, vulnerabilities, personal online safety, organizational protection strategies, and career pathways in cybersecurity.</p>
+                <a href="https://drive.google.com/file/d/1-OgomK-Eby-MifrpWQMYBMPjPA0PAGKC/view?usp=sharing" class="link" >View</a>
+            </article>
+
+            <article class="certificate-card">
+                <img src="img/ND.png" alt="TRAINING" class="certificate-photo">
+                <h4>NETWORK DEFENSE</h4>
+                <p><strong>Provider: </strong>Cisco Networking Academy<br>
+                <strong>Period: </strong> Sep 2024 - Sep 2027<br>
+                <strong>Description: </strong>Certified in network defense covering network security posture documentation, security configuration on network devices and endpoints (Linux & Windows), identity lifecycle management, simulated firewall configuration, cloud security recommendations, data protection mechanisms, Public Key Infrastructure (PKI), and virtual computing environments.</p>
+                <a href="https://drive.google.com/file/d/1uNwm3U1bbW3JFmx4nRNvA8Ui3a1N4ARJ/view?usp=sharing" class="link" >View</a>
+            </article>
+
+            <article class="certificate-card">
+                <img src="img/NSS.png" alt="TRAINING" class="certificate-photo">
+                <h4>NETWORK SUPPORT AND SECURITY</h4>
+                <p><strong>Provider: </strong>Cisco Networking Academy<br>
+                <strong>Period: </strong> Dec 2024 - Dec 2027<br>
+                <strong>Description: </strong>Certified in network support and security covering effective troubleshooting methodologies and help desk best practices, identification of common threats, vulnerabilities, and attacks on endpoints, as well as the configuration of secure user access on a network.</p>
+                <a href="https://drive.google.com/file/d/1uy3a9vTA8oBmVVaFXPaV6zgiMEiTLDIh/view?usp=sharing" class="link" >View</a>
+            </article>
+
+            <article class="certificate-card">
+                <img src="img/WD.png" alt="TRAINING" class="certificate-photo">
+                <h4>BOOTCAMP BASIC WEB DEVELOPMENT</h4>
+                <p><strong>Provider: </strong>Himpunan Mahasiswa Teknik Informatika<br>
+                <strong>Period: </strong> Apr 2024 - Jun 2024<br>
+                <strong>Description: </strong>Participated in Bootcamp Basic Web Development organized by Himpunan Mahasiswa Teknik Informatika (HIMTI) UIN Syarif Hidayatullah Jakarta, covering fundamental web development concepts and practical skills.</p>
+                <a href="https://drive.google.com/file/d/1ZHaizznxmM6LeOZFWm_rq7D0ilemU9Ib/view?usp=drive_link" class="link" >View</a>
+            </article>
+
+            <article class="certificate-card">
+                <img src="img/EPT.png" alt="TRAINING" class="certificate-photo">
+                <h4>ENGLISH PROFICIENCY TEST (EPT)</h4>
+                <p><strong>Provider: </strong>Pusat Pengembangan Bahasa UIN Syarif Hidayatullah Jakarta<br>
+                <strong>Period: </strong> Jan 2026 - Jan 2029<br>
+                <strong>Description: </strong>Achieved an English Proficiency Test (EPT) score of 500 from Pusat Pengembangan Bahasa UIN Syarif Hidayatullah Jakarta, with individual scores in Listening (45), Structure and Written Expression (46), and Reading and Vocabulary (59).</p>
+                <a href="https://drive.google.com/file/d/1NsIVBVKVPXjbQW809TWU4W5k8OsVJyVl/view?usp=drive_link" class="link" >View</a>
+            </article>
+
+            <article class="certificate-card">
+                <img src="img/PKL.jpeg" alt="TRAINING" class="certificate-photo">
+                <h4>CERTIFICATION OF APPRECIATION</h4>
+                <p><strong>Provider: </strong>SDN Citayam 05<br>
+                <strong>Description: </strong>Recognized for contributing to the development of a website profile and digital library application that supports book management and borrowing processes at SDN Citayam 05.</p>
+                <a href="https://drive.google.com/file/d/1KHoCsai0rwo_vXjNAJXqj8A90HeV95kt/view?usp=drive_link" class="link" >View</a>
+            </article>
+
+            <article class="certificate-card">
+                <img src="img/PBAK.png" alt="TRAINING" class="certificate-photo">
+                <h4>CERTIFICATION OF APPRECIATION</h4>
+                <p><strong>Provider: </strong>Himpunan Mahasiswa Teknik Informatika (HIMTI)<br>
+                <strong>Description: </strong>Awarded as Kakak Pembimbing (Mentor) in the Pengenalan Budaya Akademik dan Kemahasiswaan (PBAK) Teknik Informatika event organized by HIMTI UIN Syarif Hidayatullah Jakarta, held on 30 August 2024 with the theme “Ready to Innovate, Unite, and Strive with Informatics”.</p>
+                <a href="https://drive.google.com/file/d/1JSKFqNs6l8HShkpVXZVUSTFBHqcTmXrF/view?usp=drive_link" class="link" >View</a>
+            </article>
+
+            <article class="certificate-card">
+                <img src="img/Serti wiki.png" alt="TRAINING" class="certificate-photo">
+                <h4>CERTIFICATION OF GAYATRI LEAGUE</h4>
+                <p><strong>Provider: </strong>Wikimedia Indonesia<br>
+                <strong>Description: </strong>Participated in WikiLatih Wikipedia Bahasa Indonesia, a collaborative initiative held throughout November 2025 in collaboration with Wikimedia Indonesia and Google Asia Pacific. Contributed to the development of Indonesian Wikipedia through article editing and writing activities, supporting the improvement of accessible and reliable knowledge on the platform.</p>
+                <a href="https://drive.google.com/file/d/1lKf4VZnP4uaumDXpbjp2NSJC1HAN3XrJ/view?usp=drive_link" class="link" >View</a>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- =========================================================
+         PHOTOS OF EVENT ACTIVITIES
+         Untuk menambahkan foto:
+         1. Simpan foto ke folder img/
+         2. Ganti src="img/nama-foto.jpg"
+         3. Ubah judul + deskripsi.
+         ========================================================= -->
+    <section id="activities">
+        <h2>Event & Activities</h2>
+        <p class="section-intro">A visual collection of events, organizational activities, and memorable experiences.</p>
+        <div class="activity-gallery">
+
+           <!-- PHOTO 1 -->
+            <article class="activity-card">
+                <div class="activity-photo">
+                    <img src="img/WIKI.jpeg" alt="Deskripsi foto" class="pos-low1">
+                </div>
+                <div class="activity-caption">
+                    <h4>WikiLatih (Indonesian Wikipedia)</h4>
+                    <p>Participated in a collaborative writing activity (WikiLatih) for Indonesian Wikipedia at the Canadian Corner, contributing to content development and the creation of open-access articles. Also participated in several writing league competitions, developing writing skills through collaborative and competitive activities.</p>
+                </div>
+            </article>
+
+            <!-- PHOTO 2 -->
+            <article class="activity-card">
+                <div class="activity-photo">
+                    <img src="img/KABIM.jpeg" alt="Kakak Pembimbing PBAK" class= "pos-low2">
+                </div>
+                <div class="activity-caption">
+                    <h4>Informatics PBAK Kakak Pembimbing (Mentor)</h4>
+                    <p>Served as a Mentor in the Pengenalan Budaya Akademik dan Kemahasiswaan (PBAK) event for the Informatics Engineering program at HIMTI UIN Jakarta 2024.</p>
+                </div>
+            </article>
+
+            <!-- PHOTO 3 -->
+            <article class="activity-card">
+                <div class="activity-photo">
+                    <img src="img/PAMERAN SENI.jpeg" alt="Koordinator Pameran Seni" class= "pos-low3">
+                </div>
+                <div class="activity-caption">
+                    <h4>Art Exhibition (Event Division Coordinator)</h4>
+                    <p>Served as the Event Division Coordinator for the Dapur Seni Art Exhibition, collaborating with several student interest and talent organizations from other faculties at the Student Center of UIN Syarif Hidayatullah Jakarta. Managed inter-division coordination, developed the event concept and rundown, monitored each division’s KPIs, and ensured the event ran according to the established timeline and concept.</p>
+                </div>
+            </article>
+
+            <!-- PHOTO 4 -->
+            <article class="activity-card">
+                <div class="activity-photo">
+                    <img src="img/SOSIALISASI.jpeg" alt="Sosialisasi" class= "pos-low4">
+                </div>
+                <div class="activity-caption">
+                    <h4>MC & Speaker (Digital Ethics and Safety)</h4>
+                    <p>Served as an MC and Speaker in a Digital Ethics & Digital Safety awareness and educational session for students of SMP Islam Al Mubarak. Delivered educational content on digital ethics, online safety, misinformation, and regulations related to violations in the digital environment through an interactive and accessible approach.</p>
+                </div>
+            </article>
+
+            <!-- PHOTO 5 -->
+            <article class="activity-card">
+                <div class="activity-photo">
+                    <img src="img/TIM_KURIKULUM.jpeg" alt="Tim Kurikulum Akademik" class= "pos-low5">
+                </div>
+                <div class="activity-caption">
+                    <h4>Academic Curriculum Team</h4>
+                    <p>Contributed to the Academic Curriculum Acceleration Team at UIN Syarif Hidayatullah Jakarta to support curriculum changes and their introduction to new students. Also assisted in preparing Independent Admission examination materials by formatting and organizing questions for implementation at Syahida Inn and the Academic Rectorate Building of UIN Jakarta.</p>
+                </div>
+            </article>
+
+            <!-- PHOTO 6 -->
+            <article class="activity-card">
+                <div class="activity-photo">
+                    <img src="img/Workshop.jpeg" alt="Workshop Seni" class= "pos-low6">
+                </div>
+                <div class="activity-caption">
+                    <h4>Traditional Design Workshop (Event Division Coordinator)</h4>
+                    <p>Served as the Event Division Coordinator for the Traditional Design Workshop organized by Dapur Seni within the faculty. Responsible for developing the event concept and rundown, coordinating divisions, managing KPIs, and monitoring event implementation. Also actively participated in supporting and enhancing the overall event experience.</p>
+                </div>
+            </article>
+
+            <!-- PHOTO 7 -->
+            <article class="activity-card">
+                <div class="activity-photo">
+                    <img src="img/HUMAS.jpeg" alt="Hubungan Masyarakat" class= "pos-low7">
+                </div>
+                <div class="activity-caption">
+                    <h4>PBAK 2023 (Public Relations Team)</h4>
+                    <p>Served as a member of the Public Relations Team for PBAK UIN Syarif Hidayatullah Jakarta, supporting communication and coordination between the committee, participants, and relevant parties. Assisted in delivering event information, maintaining relationships with stakeholders, and supporting the smooth and engaging implementation of the PBAK activities.</p>
+                </div>
+            </article>
+
+            <!-- PHOTO 8 -->
+            <article class="activity-card">
+                <div class="activity-photo">
+                    <img src="img/SS.jpeg" alt="Sharing Session" class= "pos-low2">
+                </div>
+                <div class="activity-caption">
+                    <h4>Speaker (Team Management Sharing Class)</h4>
+                    <p>Served as a Speaker in the Sharing Class organized by Dapur Seni in 2025, delivering a session on “Team Management” for the Management Division. Shared insights and practical knowledge on effective team management, coordination, collaboration, and organizing organizational data and documents to support efficient administration and organizational performance.</p>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- =========================================================
+         CONTACT — bagian terakhir.
+         EDIT email, GitHub, Instagram, LinkedIn, atau link lain.
+         ========================================================= -->
+    <section id="contact">
+        <h2>Let's Connect</h2>
+        <p>Interested in collaboration, opportunities, or simply want to connect? Feel free to reach out.</p>
+        <div class="contact-links">
+            <a href="mailto:Kaylanazelika4@gmail.com">Email</a>
+            <a href="https://github.com/keyrav18" target="_blank">GitHub</a>
+            <a href="https://instagram.com/zelika20_" target="_blank">Instagram</a>
+            <a href="https://www.linkedin.com/in/kayla-nazelika-04a995387" target="_blank">LinkedIn</a>
+        
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Kayla Nazelika. All rights reserved💗</p>
+    </footer>
+
+    <script>
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Fade-in sections on scroll
+        const sections = document.querySelectorAll('section');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        sections.forEach(section => observer.observe(section));
+
+        // 3D Scene with Three.js - Soft feminine orb rotating
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Simple interaction: Rotate faster on mouse move
+        document.addEventListener('mousemove', (event) => {
+            sphere.rotation.y = event.clientX / window.innerWidth * Math.PI;
+            sphere.rotation.x = event.clientY / window.innerHeight * Math.PI;
+        });
+    </script>
+<script src="music.js"></script>    
+</body>
+</html>

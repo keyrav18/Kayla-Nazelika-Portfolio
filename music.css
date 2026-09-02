@@ -1,0 +1,13 @@
+#music-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #ff7eb3;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 16px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
